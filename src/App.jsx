@@ -1,17 +1,41 @@
 import { useState } from "react";
 import "./App.css";
 import sites from "./site";
+import axios from "axios";
 
 function App() {
   const [site, setSite] = useState({});
-  const [ready, setReady] = useState(true);
+  const [ready, setReady] = useState(false);
+  const [dimension, setDimension] = useState(
+    `${window.innerWidth}x${window.innerHeight}`
+  );
 
-  function getRandom() {
+  const getImage = async (link, dimension) => {
+    try {
+      const resp = await axios.get(
+        `https://api.screenshotmachine.com?key=${
+          import.meta.env.VITE_API_KEY
+        }}&url=${link}&dimension=1200x720`
+      );
+      // devuelve cusadlfjasd
+
+      console.log(resp.data);
+      return resp.data;
+    } catch (e) {
+      console.log("ERROR", e);
+    }
+  };
+
+  const getRandom = async () => {
     const len = sites.length;
     const randomNumber = Math.floor(Math.random() * len);
-    setSite(sites[randomNumber]);
+    const site = sites[randomNumber];
+    const image = (await getImage(site.link, dimension)) || "";
+    console.log("imagen en getrandom", image);
+    site.image = image;
+    setSite(site);
     setReady(true);
-  }
+  };
 
   return (
     <main>
@@ -33,7 +57,13 @@ function App() {
           </a>
 
           <figure>
-            <img src={site.image} alt={`${site.title} home image`} />
+            <img
+              src={
+                site.image ||
+                "https://cdn4.iconfinder.com/data/icons/ui-beast-4/32/Ui-12-512.png"
+              }
+              alt={`${site.title} home image`}
+            />
           </figure>
         </div>
       )}
