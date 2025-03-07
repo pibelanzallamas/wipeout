@@ -2,25 +2,32 @@ import { useState } from "react";
 import "./App.css";
 import sites from "./site";
 import axios from "axios";
+import { generateScreenshotApiUrl } from "screenshotmachine";
 
 function App() {
   const [site, setSite] = useState({});
   const [ready, setReady] = useState(false);
-  const [dimension, setDimension] = useState(
-    `${window.innerWidth}x${window.innerHeight}`
-  );
+  // const [dimension, setDimension] = useState(
+  //   `${window.innerWidth}x${window.innerHeight}`
+  // );
+  const customerKey = import.meta.env.VITE_API_KEY;
 
   const getImage = async (link, dimension) => {
-    try {
-      const resp = await axios.get(
-        `https://api.screenshotmachine.com?key=${
-          import.meta.env.VITE_API_KEY
-        }}&url=${link}&dimension=1200x720`
-      );
-      // devuelve cusadlfjasd
+    const secretPhrase = "";
+    const options = {
+      url: link,
+      dimension: "1366x760",
+      device: "desktop",
+      format: "png",
+      cacheLimit: "0",
+      delay: "200",
+      zoom: "100",
+    };
 
-      console.log(resp.data);
-      return resp.data;
+    try {
+      const resp = generateScreenshotApiUrl(customerKey, secretPhrase, options);
+      console.log(resp);
+      return resp;
     } catch (e) {
       console.log("ERROR", e);
     }
